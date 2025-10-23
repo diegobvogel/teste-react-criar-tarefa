@@ -1,8 +1,9 @@
 
-````markdown
+
 # 📘 ESTUDO REACT
 
-## 🚀 Passos
+## 🚀 Passos ##
+
 
 1. **instalar o node (npm)**
 
