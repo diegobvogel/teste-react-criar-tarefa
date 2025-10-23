@@ -1,29 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import AddTask from "./components/AddTask";
 import Tasks from "./components/Tasks";
 
 function App() {
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Estudar React",
-      description: "Estudar os conceitos básicos de React",
-      isCompleted: false,
-    },
-    {
-      id: 2,
-      title: "Fazer Exercícios",
-      description: "Resolver exercícios práticos de React",
-      isCompleted: false,
-    },
-    {
-      id: 3,
-      title: "Ler Documentação",
-      description: "Ler a documentação oficial do React",
-      isCompleted: false,
-    },
-  ]);
+  const [tasks, setTasks] = useState(
+    JSON.parse(localStorage.getItem("tasks")) || []
+  );
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    // chamar api para buscar tarefas
+    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+      .then((response) => response.json())
+      .then((data) => {
+        const fetchedTasks = data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          isCompleted: item.completed,
+        }));
+        setTasks(fetchedTasks);
+      });
+  }, []);
 
   function onTaskClick(taskId) {
     console.log("Task clicked:", taskId);
