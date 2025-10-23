@@ -12,7 +12,6 @@
    npm create vite@5.5.2 .
    npm install
    npm run dev   # para subir o projeto
-````
 
 3. **instalar tailwindcss, postcss e autoprefixer**
 
