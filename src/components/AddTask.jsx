@@ -15,7 +15,7 @@ function AddTask({ tasks, onAddTask }) {
     };
 
     if (!title.trim() || !description.trim()) {
-      return alert("Por favor, preencha todos os campos.");
+      return alert("Necessário preencher todos os campos.");
     }
 
     onAddTask(newTask);
