@@ -1,17 +1,21 @@
-
-
 # 📘 ESTUDO REACT
 
-## 🚀 Passos ##
+## 🚀 Passos
 
+Observações do projeto:
+
+- Versão do Node: 10.9.4
 
 1. **instalar o node (npm)**
 
-2. **instalar o Vite (rodar o comando abaixo dentro da pasta que vc quer criar o projeto)**  
+2. **instalar o Vite (rodar o comando abaixo dentro da pasta que vc quer criar o projeto)**
+
    ```bash
    npm create vite@5.5.2 .
    npm install
    npm run dev   # para subir o projeto
+
+   ```
 
 3. **instalar tailwindcss, postcss e autoprefixer**
 
