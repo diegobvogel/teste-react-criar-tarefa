@@ -4,46 +4,61 @@ import AddTask from "./components/AddTask";
 import Tasks from "./components/Tasks";
 
 function App() {
-  const [tasks, setTasks] = useState(
-    JSON.parse(localStorage.getItem("tasks")) || []
-  );
+  const [tasks, setTasks] = useState([]);
 
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  useEffect(() => {
-    // chamar api para buscar tarefas
-    fetch("https://jsonplaceholder.typicode.com/todos?_limit=10")
+  const fetchTasks = () => {
+    fetch("http://localhost:8080/task/all")
       .then((response) => response.json())
       .then((data) => {
-        const fetchedTasks = data.map((item) => ({
+        const formattedTasks = data.map((item) => ({
           id: item.id,
           title: item.title,
           isCompleted: item.completed,
         }));
-        setTasks(fetchedTasks);
+        setTasks(formattedTasks);
       });
+  };
+
+  useEffect(() => {
+    fetchTasks();
   }, []);
 
+  function saveTaskBackend(task) {
+    fetch("http://localhost:8080/task/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(task),
+    })
+      .then(() => fetchTasks()) // Atualiza lista ao finalizar
+      .catch((err) => console.log("Erro ao adicionar", err));
+  }
+
   function onTaskClick(taskId) {
-    console.log("Task clicked:", taskId);
-    const newTasks = tasks.map((task) => {
-      if (task.id === taskId) {
-        return { ...task, isCompleted: !task.isCompleted };
-      }
-      return task;
-    });
-    setTasks(newTasks);
+    const updatedTask = tasks.find((task) => task.id === taskId);
+    const taskToSend = {
+      ...updatedTask,
+      isCompleted: !updatedTask.isCompleted,
+    };
+
+    fetch(`http://localhost:8080/task/update/${taskId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(taskToSend),
+    })
+      .then(() => fetchTasks()) // Atualiza lista ao finalizar
+      .catch((err) => console.log("Erro ao atualizar", err));
   }
 
   function onDeleteTaskClick(taskId) {
-    const newTasks = tasks.filter((task) => task.id !== taskId);
-    setTasks(newTasks);
+    fetch(`http://localhost:8080/task/delete/${taskId}`, {
+      method: "DELETE",
+    })
+      .then(() => fetchTasks()) // Atualiza lista ao finalizar
+      .catch((err) => console.log("Erro ao excluir", err));
   }
 
   function onAddTask(newTask) {
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    saveTaskBackend(newTask);
   }
 
   return (
@@ -52,7 +67,9 @@ function App() {
         <h1 className="text-3xl text-slate-100 font-bold text-center">
           Gerenciador de Tarefas!
         </h1>
+
         <AddTask tasks={tasks} onAddTask={onAddTask} />
+
         <Tasks
           tasks={tasks}
           onTaskClick={onTaskClick}
